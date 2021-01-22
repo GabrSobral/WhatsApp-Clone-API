@@ -22,6 +22,6 @@ router.post('/room', [checkAuth] , RoomController.CreateRoom)
 router.get('/room', [checkAuth], RoomController.ListRooms)
 router.get('/room/:id', [checkAuth], RoomController.ShowRoom)
 router.get('/room/messages/:id', [checkAuth], RoomController.ListRoomMessages)
-router.delete('/room/:id', [checkAuth], RoomController.DeleteRoom);
+router.delete('/room/:id', [checkAuth], RoomController.DeleteRoom)
 
 export default router

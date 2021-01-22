@@ -1,0 +1,7 @@
+{
+    "name": "chat-api",
+    "version": 2,
+    "env": {
+      "MONGODB_URI": "@chat-api"
+    }
+  }
