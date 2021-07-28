@@ -9,10 +9,6 @@ export interface IRoom extends Document {
 }
 
 const RoomSchema = new Schema<IRoom>({
-  name: {
-    type: String,
-    required: true,
-  },
   messages: [
     {
       type: Schema.Types.ObjectId,
