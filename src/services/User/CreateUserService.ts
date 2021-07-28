@@ -21,8 +21,6 @@ class CreateUserService {
       password,
     });
 
-    user.isOnline = true;
-    await user.save();
     user.password = undefined;
 
     const token = handleGenerateJWT(user);

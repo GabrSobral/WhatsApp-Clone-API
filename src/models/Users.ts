@@ -24,7 +24,7 @@ const UserSchema = new Schema<IUser>({
   isOnline: {
     type: Boolean,
     required: true,
-    default: false,
+    default: true,
   },
   lastOnline: {
     type: Date,
@@ -42,8 +42,12 @@ const UserSchema = new Schema<IUser>({
     default: Date.now,
   },
 });
+
 UserSchema.pre("save", async function (next) {
   const hash = await bcrypt.hash(this.password, 10);
+  console.log('this.password: ', this.password)
+  console.log('--------------------------------')
+  console.log('hash: ', hash)
   this.password = hash;
 
   next();

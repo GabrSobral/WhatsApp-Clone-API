@@ -6,6 +6,8 @@ class DeleteUserController {
     const user_id = request.params.id
 
     await DeleteUserService.execute(user_id)
+
+    return response.sendStatus(200)
   }
 }
 export default new DeleteUserController()

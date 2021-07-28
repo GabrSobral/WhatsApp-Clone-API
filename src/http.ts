@@ -13,9 +13,9 @@ const app = express()
 const server = http.createServer(app)
 const io = new socketio.Server(server);
 
-app.use(express.json());
 app.use(cors());
-app.use(ErrorCatcher)
+app.use(express.json());
 app.use(routes)
+app.use(ErrorCatcher)
 
 export { io, server }
