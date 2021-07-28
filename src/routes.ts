@@ -1,8 +1,7 @@
 import express from 'express'
-// import MessageController from './controllers/MessageController.js'
-// import RoomController from './controllers/RoomController.js'
 
 import checkAuth from './middlewares/checkAuth'
+
 import CreateUserController from './controllers/Users/CreateUserController'
 import ShowUserController from './controllers/Users/ShowUserController'
 import AuthenticateController from './controllers/Users/AuthenticateController'
@@ -10,11 +9,15 @@ import DeleteUserController from './controllers/Users/DeleteUserController'
 import LogoutUserController from './controllers/Users/LogoutUserController'
 import ListUsersController from './controllers/Users/ListUsersController'
 
+import CreateMessageController from './controllers/Messages/CreateMessageController'
+import ListMessagesController from './controllers/Messages/ListMessagesController'
+import DeleteMessagesController from './controllers/Messages/DeleteMessagesController'
+
 const router = express.Router()
 
-// router.post('/messages/new',[checkAuth], MessageController.CreateMessage)
-// router.get('/messages/sync',[checkAuth], MessageController.ListMessages)
-// router.delete('/messages/delete/:id', [checkAuth], MessageController.DeleteMessages)
+router.post('/messages/new',[checkAuth], CreateMessageController.handle)
+router.get('/messages/sync',[checkAuth], ListMessagesController.handle)
+router.delete('/messages/delete/:id', [checkAuth], DeleteMessagesController.handle)
 
 router.post('/users/register', CreateUserController.handle)
 router.post('/users/authenticate', AuthenticateController.handle)
