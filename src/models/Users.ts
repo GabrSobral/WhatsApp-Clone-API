@@ -1,7 +1,7 @@
 import { Schema, Document, model } from "mongoose";
 import bcrypt from "bcryptjs";
 
-interface User extends Document{
+export interface User extends Document{
   name: string;
   email: string;
   isOnline: boolean;
@@ -52,4 +52,4 @@ UserSchema.pre("save", async function (next) {
 
 const User = model("users", UserSchema);
 
-export default User;
+export { User };

@@ -1,9 +1,10 @@
 import { Schema, model, Document } from "mongoose";
+import { User } from "./Users";
 
-interface Message extends Document {
+export interface Message extends Document {
   message: string;
-  user: string;
-  assignedTo: string;
+  user: User['_id'];
+  assignedTo: User['_id'];
   timestamp: Date;
   reveived: boolean;
 }
@@ -35,4 +36,4 @@ const MessageSchema = new Schema<Message>({
 
 const Messages = model("messages", MessageSchema);
 
-export default Messages;
+export { Messages };

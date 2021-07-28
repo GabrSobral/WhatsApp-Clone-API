@@ -1,9 +1,11 @@
 import { Schema, Document, model } from "mongoose";
+import { Message } from "./Message";
+import { User } from "./Users";
 
-interface Room extends Document {
+export interface Room extends Document {
   name: string;
-  messages: string[];
-  users: string[];
+  messages: Message['_id'];
+  users: User['_id'];
 }
 
 const RoomSchema = new Schema<Room>({
@@ -28,4 +30,4 @@ const RoomSchema = new Schema<Room>({
 
 const Room = model("rooms", RoomSchema);
 
-export default Room;
+export { Room };
