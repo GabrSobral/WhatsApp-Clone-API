@@ -1,15 +1,15 @@
 import { Schema, model, Document } from "mongoose";
-import { User } from "./Users";
+import { IUser } from "./Users";
 
-export interface Message extends Document {
+export interface IMessage extends Document {
   message: string;
-  user: User['_id'];
-  assignedTo: User['_id'];
+  user: IUser['_id'];
+  assignedTo: IUser['_id'];
   timestamp: Date;
   reveived: boolean;
 }
 
-const MessageSchema = new Schema<Message>({
+const MessageSchema = new Schema<IMessage>({
   message: {
     type: String,
     required: String,
@@ -34,6 +34,6 @@ const MessageSchema = new Schema<Message>({
   },
 });
 
-const Messages = model("messages", MessageSchema);
+const Messages = model<IMessage>("messages", MessageSchema);
 
 export { Messages };

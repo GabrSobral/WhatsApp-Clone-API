@@ -1,14 +1,14 @@
 import { Schema, Document, model } from "mongoose";
-import { Message } from "./Message";
-import { User } from "./Users";
+import { IMessage } from "./Message";
+import { IUser } from "./Users";
 
-export interface Room extends Document {
+export interface IRoom extends Document {
   name: string;
-  messages: Message['_id'];
-  users: User['_id'];
+  messages: IMessage['_id'];
+  users: IUser['_id'];
 }
 
-const RoomSchema = new Schema<Room>({
+const RoomSchema = new Schema<IRoom>({
   name: {
     type: String,
     required: true,
@@ -28,6 +28,6 @@ const RoomSchema = new Schema<Room>({
   ],
 });
 
-const Room = model("rooms", RoomSchema);
+const Room = model<IRoom>("rooms", RoomSchema);
 
 export { Room };

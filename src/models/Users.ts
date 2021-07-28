@@ -1,16 +1,16 @@
 import { Schema, Document, model } from "mongoose";
 import bcrypt from "bcryptjs";
 
-export interface User extends Document{
+export interface IUser extends Document{
   name: string;
   email: string;
   isOnline: boolean;
-  lastOnline: boolean;
+  lastOnline: Date;
   password: string;
   createdAt: Date;
 }
 
-const UserSchema = new Schema<User>({
+const UserSchema = new Schema<IUser>({
   name: {
     type: String,
     required: true,
@@ -50,6 +50,6 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-const User = model("users", UserSchema);
+const User = model<IUser>("users", UserSchema);
 
 export { User };
