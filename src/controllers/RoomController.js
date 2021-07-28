@@ -1,6 +1,6 @@
 import express from 'express'
-import Room from '../models/room.js'
-import Messages from '../models/messageContent.js'
+import { Room } from '../models/Room'
+import { Messages } from '../models/Message'
 
 export default {
     async CreateRoom( req, res ){

@@ -13,7 +13,7 @@ class CreateUserService {
     const alreadyExists = await User.findOne({ email });
 
     if (alreadyExists) {
-      throw new Error("User already exists");
+      throw new Error("User already exists status:400");
     }
     const user = await User.create({
       name,

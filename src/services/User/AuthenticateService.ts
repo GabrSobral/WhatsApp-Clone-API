@@ -9,11 +9,13 @@ interface IAuthenticateService {
 
 class AuthenticateService{
   async execute({ email, password }: IAuthenticateService){
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email }).select("+password")
+    console.log(user)
 
     if(!user){
       throw new Error("Email/password invalid status:400")
     }
+    
     if(!await compare(password, user.password)){
       throw new Error('Email/password invalid status:400')
     }

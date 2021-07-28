@@ -5,7 +5,7 @@ class ShowUserService{
     const user = User.findById(user_id)
 
     if(!user) {
-      throw new Error('User not found')
+      throw new Error('User not found status:400')
     }
 
     return user
