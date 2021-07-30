@@ -32,6 +32,10 @@ const MessageSchema = new Schema<IMessage>({
     type: Boolean,
     default: false,
   },
+  viewed: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const Messages = model<IMessage>("messages", MessageSchema);

@@ -4,8 +4,8 @@ import { IUser } from "./Users";
 
 export interface IRoom extends Document {
   name: string;
-  messages: IMessage['_id'];
-  users: IUser['_id'];
+  messages: IMessage["_id"];
+  users: IUser["_id"];
 }
 
 const RoomSchema = new Schema<IRoom>({
@@ -20,6 +20,13 @@ const RoomSchema = new Schema<IRoom>({
       type: Schema.Types.ObjectId,
       ref: "users",
       required: true,
+    },
+  ],
+  unreadMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: false,
     },
   ],
 });
