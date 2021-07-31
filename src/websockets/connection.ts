@@ -5,8 +5,11 @@ io.on('connection', (socket: Socket) => {
   
   console.log('A new user has been connected: ', socket.id)
 
-  socket.on('joinroom', (room) => {
-    socket.join(room)
+  socket.on('joinroom', ({rooms}) => {
+    rooms.forEach(item => {
+      console.log(item)
+     socket.join(item)
+    })
 
   })
   socket.on('leaveRoom', (room) => {
