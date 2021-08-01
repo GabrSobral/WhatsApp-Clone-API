@@ -4,8 +4,9 @@ import { IUser } from "../../models/Users"
 class ListRoomsService{
   async execute(user_id: string){
     const rooms = 
-      await Room.find({ users: {$in:user_id} })
+      await Room.find({ users: {$in:user_id} }, { messages: {$slice: -1} })
       .populate(['users', 'messages'])
+
 
     const formattedRooms= []
 
