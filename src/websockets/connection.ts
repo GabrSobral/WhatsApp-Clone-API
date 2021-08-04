@@ -8,7 +8,6 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('joinroom', ({rooms}) => {
     rooms.forEach((item: string) => {
-      console.log(item)
      socket.join(item)
     })
 
@@ -17,8 +16,11 @@ io.on('connection', (socket: Socket) => {
     socket.leave(room)
   })
   socket.on('viewUnreadMessages', async({ user, room }) => {
-    console.log(user, room, "banana")
     await UnreadMessages.deleteMany({ to: room, user: { $nin:user } })
+  })
+
+  socket.on('writting', ({ to, writting, room }) => {
+    io.to(to).emit('receiveWritting', { writting, room, to })
   })
 
   socket.on('disconnect', () =>{
