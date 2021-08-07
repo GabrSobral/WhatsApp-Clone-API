@@ -31,7 +31,7 @@ const MessageSchema = new Schema<IMessage>({
   },
   received: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   viewed: {
     type: Boolean,
