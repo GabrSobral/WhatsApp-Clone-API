@@ -2,6 +2,7 @@ import { io } from "../http"
 import { Socket } from 'socket.io'
 import { UnreadMessages } from "../models/UnreadMessages"
 import { Messages } from "../models/Message"
+import { User } from "../models/Users"
 
 io.on('connection', (socket: Socket) => {
   console.log('A new user has been connected: ', socket.id)
@@ -21,11 +22,20 @@ io.on('connection', (socket: Socket) => {
     await Messages.updateMany(
       { viewed: false }, {"$set":{"viewed": true}})
 
-    io.to(user).emit('receiveReadMessages', { room })
+    io.to(user).emit('receiveReadMessages', { room, user })
   })
 
   socket.on('writting', ({ to, writting, room }) => {
     io.to(to).emit('receiveWritting', { writting, room, to })
+  })
+
+  socket.on('imOnline', async({ user, status, room }) => {
+    if(status){
+      await User.findByIdAndUpdate(user, { isOnline: true })
+    } else {
+      await User.findByIdAndUpdate(user, { isOnline: false })
+    }
+    io.to(user).emit('receiveImOnline', { user, status, room })
   })
 
   socket.on('disconnect', () =>{
