@@ -4,8 +4,10 @@ import ListRoomMessagesService from "../../services/Room/ListRoomMessagesService
 class ListRoomMessagesController {
   async handle(request: Request, response: Response) {
     const room_id = request.params.id;
+    const { last_message } = request.body;
 
-    const room_messages = await ListRoomMessagesService.execute(room_id);
+    const room_messages = await ListRoomMessagesService
+      .execute(room_id, last_message);
 
     return response.json(room_messages);
   }
