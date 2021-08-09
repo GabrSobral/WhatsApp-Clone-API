@@ -20,7 +20,7 @@ io.on('connection', (socket: Socket) => {
   socket.on('viewUnreadMessages', async({ user, room }) => {
     await UnreadMessages.deleteMany({ to: room, user: { $nin:user } })
     await Messages.updateMany(
-      { viewed: false }, {"$set":{"viewed": true}})
+      { viewed: false, user: { $nin:user } }, {"$set":{"viewed": true}})
 
     io.to(user).emit('receiveReadMessages', { room, user })
   })
