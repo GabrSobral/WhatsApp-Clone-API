@@ -3,8 +3,9 @@ import ShowUserService from "../../services/User/ShowUserService";
 
 class ShowUserController{
   async handle(request: Request, response: Response){
-    const user_id = request.params.id
-    const user = await ShowUserService.execute(user_id)
+    const { email } = request.body
+
+    const user = await ShowUserService.execute(email)
 
     return response.json(user)
   }

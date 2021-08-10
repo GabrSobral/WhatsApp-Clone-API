@@ -30,7 +30,7 @@ router.delete('/messages/delete-all', checkAuth, DeleteAllMessages.handle)
 router.post('/users/register', CreateUserController.handle)
 router.post('/users/authenticate', AuthenticateController.handle)
 router.get('/users/list', checkAuth, ListUsersController.handle)
-router.get('/users/show/:id', checkAuth, ShowUserController.handle)
+router.get('/users/show', checkAuth, ShowUserController.handle)
 router.delete('/users/delete/:id', checkAuth, DeleteUserController.handle)
 router.patch('/users/logout', checkAuth, LogoutUserController.handle)
 

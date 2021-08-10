@@ -1,8 +1,9 @@
 import { User } from "../../models/Users";
 
 class ShowUserService{
-  async execute(user_id: string){
-    const user = User.findById(user_id)
+  async execute(email: string){
+    email.toLowerCase()
+    const user = await User.find({ email })
 
     if(!user) {
       throw new Error('User not found status:400')
