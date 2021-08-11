@@ -1,8 +1,10 @@
 import { io } from "../http"
 import { Socket } from 'socket.io'
 import { UnreadMessages } from "../models/UnreadMessages"
+
 import { Messages } from "../models/Message"
 import { User } from "../models/Users"
+import { Room } from "../models/Room"
 
 io.on('connection', (socket: Socket) => {
   console.log('A new user has been connected: ', socket.id)
@@ -11,6 +13,24 @@ io.on('connection', (socket: Socket) => {
     rooms.forEach((item: string) => {
      socket.join(item)
     })
+  })
+
+  socket.on('joinNewRoom', async ({room, user, check}) =>{
+    socket.join(room)    
+
+    if(!check){
+      const updatedRoom = await Room.findOne({ users: {$in:[user, room]} }).populate(['users', "messages"])
+      console.log(updatedRoom)
+      const user_data = await User.findById(user)
+
+      const formattedRoom = {
+        id: updatedRoom._id,
+        messages: updatedRoom.messages,
+        user: user_data,
+        unreadMessages: 0
+      }
+      io.to(room).emit('receiveJoinNewRoom', { user, room: updatedRoom })
+    }
   })
 
   socket.on('leaveRoom', (room) => {

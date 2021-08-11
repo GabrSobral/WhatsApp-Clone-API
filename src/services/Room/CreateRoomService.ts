@@ -1,5 +1,5 @@
 import { Room } from "../../models/Room";
-import { IUser } from "../../models/Users";
+import { IUser, User } from "../../models/Users";
 
 interface ICreateRoomService {
   user_id: string;
@@ -20,11 +20,13 @@ class CreateRoomService {
       users: [user_id, user],
     });
 
+    const user_data = await User.findById(user)
+
     return({
       _id: room._id,
       messages: room.messages,
-      user: room.users.filter((user: IUser) => String(user._id) !== String(user_id)),
-      unreadMessages: []
+      user: [user_data],
+      unreadMessages: 0
     })
   }
 }
