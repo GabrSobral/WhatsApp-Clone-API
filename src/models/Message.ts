@@ -7,6 +7,7 @@ export interface IMessage extends Document {
   assignedTo: IUser['_id'];
   timestamp: Date;
   reveived: boolean;
+  viewed: boolean
 }
 
 const MessageSchema = new Schema<IMessage>({
@@ -30,7 +31,7 @@ const MessageSchema = new Schema<IMessage>({
   },
   received: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   viewed: {
     type: Boolean,

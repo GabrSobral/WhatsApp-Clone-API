@@ -18,17 +18,19 @@ import ListRoomsController from './controllers/Room/ListRoomsController'
 import ShowRoomController from './controllers/Room/ShowRoomController'
 import ListRoomMessagesController from './controllers/Room/ListRoomMessagesController'
 import DeleteRoomController from './controllers/Room/DeleteRoomController'
+import DeleteAllMessages from './controllers/Messages/DeleteAllMessages'
 
 const router = express.Router()
 
 router.post('/messages/new', checkAuth, CreateMessageController.handle)
 router.get('/messages/list', checkAuth, ListMessagesController.handle)
 router.delete('/messages/delete/:id', checkAuth, DeleteMessagesController.handle)
+router.delete('/messages/delete-all', checkAuth, DeleteAllMessages.handle)
 
 router.post('/users/register', CreateUserController.handle)
 router.post('/users/authenticate', AuthenticateController.handle)
 router.get('/users/list', checkAuth, ListUsersController.handle)
-router.get('/users/show/:id', checkAuth, ShowUserController.handle)
+router.post('/users/show', checkAuth, ShowUserController.handle)
 router.delete('/users/delete/:id', checkAuth, DeleteUserController.handle)
 router.patch('/users/logout', checkAuth, LogoutUserController.handle)
 
