@@ -18,11 +18,6 @@ io.on('connection', (socket: Socket) => {
   socket.on('joinNewRoom', async ({user_target, user, check, room_id}) =>{
     socket.join(user_target)    
 
-    console.log('user_target: ', user_target)
-    console.log('user: ', user)
-    console.log('check: ', check)
-    console.log('room: ', room_id)
-
     if(!check){
       const updatedRoom = await Room.findById(room_id)
         .populate(['users', "messages"])
@@ -41,14 +36,20 @@ io.on('connection', (socket: Socket) => {
     }
   })
 
-  socket.on('leaveRoom', (room) => {
-    socket.leave(room)
+  socket.on('removeRoom', ({ user_target, user, room, check }) => {
+    if(!check){
+      io.to(user_target).emit('receiveRemoveRoom', { user, room })
+      socket.leave(user_target)
+    } else {
+      socket.leave(user_target)
+    }
+    
   })
 
   socket.on('viewUnreadMessages', async({ user, room }) => {
     await UnreadMessages.deleteMany({ to: room, user: { $nin:user } })
     await Messages.updateMany(
-      { viewed: false, user: { $nin:user } }, {"$set":{"viewed": true}})
+      { viewed: false, user: { $nin:user }, to: room }, {"$set":{"viewed": true}})
 
     io.to(user).emit('receiveReadMessages', { room, user })
   })
