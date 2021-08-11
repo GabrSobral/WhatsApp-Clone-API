@@ -19,7 +19,13 @@ class CreateRoomService {
     const room = await Room.create({
       users: [user_id, user],
     });
-    return room;
+
+    return({
+      _id: room._id,
+      messages: room.messages,
+      user: room.users.filter((user: IUser) => String(user._id) !== String(user_id)),
+      unreadMessages: []
+    })
   }
 }
 export default new CreateRoomService();
