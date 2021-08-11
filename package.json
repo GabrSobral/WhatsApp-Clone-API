@@ -6,8 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
     "dev": "tsnd --inspect --respawn --transpile-only --ignore-watch node_modules src/server.ts",
-    "start": "node dist/server.js"
+    "start": "node src/server.js"
   },
   "keywords": [],
   "author": "",
