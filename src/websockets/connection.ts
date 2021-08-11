@@ -15,32 +15,41 @@ io.on('connection', (socket: Socket) => {
     })
   })
 
-  socket.on('joinNewRoom', async ({room, user, check}) =>{
-    socket.join(room)    
+  socket.on('joinNewRoom', async ({user_target, user, check, room_id}) =>{
+    socket.join(user_target)    
 
     if(!check){
-      const updatedRoom = await Room.findOne({ users: {$in:[user, room]} }).populate(['users', "messages"])
+      const updatedRoom = await Room.findById(room_id)
+        .populate(['users', "messages"])
+
       console.log(updatedRoom)
       const user_data = await User.findById(user)
 
       const formattedRoom = {
-        id: updatedRoom._id,
+        _id: updatedRoom._id,
         messages: updatedRoom.messages,
-        user: user_data,
+        user: [user_data],
         unreadMessages: 0
       }
-      io.to(room).emit('receiveJoinNewRoom', { user, room: updatedRoom })
+      io.to(user_target).emit('receiveJoinNewRoom', 
+        { user, room: formattedRoom })
     }
   })
 
-  socket.on('leaveRoom', (room) => {
-    socket.leave(room)
+  socket.on('removeRoom', ({ user_target, user, room, check }) => {
+    if(!check){
+      io.to(user_target).emit('receiveRemoveRoom', { user, room })
+      socket.leave(user_target)
+    } else {
+      socket.leave(user_target)
+    }
+    
   })
 
   socket.on('viewUnreadMessages', async({ user, room }) => {
     await UnreadMessages.deleteMany({ to: room, user: { $nin:user } })
     await Messages.updateMany(
-      { viewed: false, user: { $nin:user } }, {"$set":{"viewed": true}})
+      { viewed: false, user: { $nin:user }, to: room }, {"$set":{"viewed": true}})
 
     io.to(user).emit('receiveReadMessages', { room, user })
   })
