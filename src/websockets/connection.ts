@@ -15,21 +15,29 @@ io.on('connection', (socket: Socket) => {
     })
   })
 
-  socket.on('joinNewRoom', async ({room, user, check}) =>{
-    socket.join(room)    
+  socket.on('joinNewRoom', async ({user_target, user, check, room_id}) =>{
+    socket.join(user_target)    
+
+    console.log('user_target: ', user_target)
+    console.log('user: ', user)
+    console.log('check: ', check)
+    console.log('room: ', room_id)
 
     if(!check){
-      const updatedRoom = await Room.findOne({ users: {$in:[user, room]} }).populate(['users', "messages"])
+      const updatedRoom = await Room.findById(room_id)
+        .populate(['users', "messages"])
+
       console.log(updatedRoom)
       const user_data = await User.findById(user)
 
       const formattedRoom = {
-        id: updatedRoom._id,
+        _id: updatedRoom._id,
         messages: updatedRoom.messages,
-        user: user_data,
+        user: [user_data],
         unreadMessages: 0
       }
-      io.to(room).emit('receiveJoinNewRoom', { user, room: updatedRoom })
+      io.to(user_target).emit('receiveJoinNewRoom', 
+        { user, room: formattedRoom })
     }
   })
 
