@@ -1,6 +1,9 @@
 import express from 'express'
 
 import checkAuth from './middlewares/checkAuth'
+import multer from 'multer'
+
+const upload = multer({ dest: './uploads/' })
 
 import CreateUserController from './controllers/Users/CreateUserController'
 import ShowUserController from './controllers/Users/ShowUserController'
@@ -39,5 +42,7 @@ router.get('/room/list', checkAuth, ListRoomsController.handle)
 router.get('/room/:id', checkAuth, ShowRoomController.handle)
 router.get('/room/messages/list/:id', checkAuth, ListRoomMessagesController.handle)
 router.delete('/room/delete/:id', checkAuth, DeleteRoomController.handle)
+
+router.post('status/create', checkAuth, upload.single('file'), CreateRoomController.handle)
 
 export default router
