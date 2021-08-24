@@ -1,7 +1,7 @@
 import { IStatusSchema, Status } from "../../models/Status";
 
 interface ICreateStatusService {
-  file?: String;
+  file?: Express.Multer.File;
   message?: String;
   owner: String;
   color: String
