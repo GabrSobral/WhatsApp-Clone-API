@@ -1,10 +1,8 @@
 import express from 'express'
+import multer from 'multer'
 
 import checkAuth from './middlewares/checkAuth'
-import multer from 'multer'
 import { options } from './config/multer'
-
-const upload = multer(options)
 
 import CreateUserController from './controllers/Users/CreateUserController'
 import ShowUserController from './controllers/Users/ShowUserController'
@@ -23,10 +21,12 @@ import ShowRoomController from './controllers/Room/ShowRoomController'
 import ListRoomMessagesController from './controllers/Room/ListRoomMessagesController'
 import DeleteRoomController from './controllers/Room/DeleteRoomController'
 import DeleteAllMessages from './controllers/Messages/DeleteAllMessages'
+
 import ListMyStatusController from './controllers/Status/ListMyStatusController'
 import CreateStatusController from './controllers/Status/CreateStatusController'
 
 const router = express.Router()
+const upload = multer(options)
 
 router.post('/messages/new', checkAuth, CreateMessageController.handle)
 router.get('/messages/list', checkAuth, ListMessagesController.handle)

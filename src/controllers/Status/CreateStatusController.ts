@@ -14,7 +14,7 @@ class CreateStatusController {
       message
     })
 
-    return status
+    return response.json(status)
   }
 }
 export default new CreateStatusController()
