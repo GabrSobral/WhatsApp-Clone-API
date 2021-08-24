@@ -21,6 +21,7 @@ const StatusSchema = new Schema<IStatusSchema>({
   validity: {
     type: Date,
     required: true,
+    default: new Date(+new Date() + 1*24*60*60*1000) // 1 day of validity
   },
   owner: {
     type: Schema.Types.ObjectId,
