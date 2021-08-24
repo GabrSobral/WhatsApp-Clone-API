@@ -28,7 +28,7 @@ const StatusSchema = new Schema<IStatusSchema>({
   },
   viewedBy: [{
     type: Schema.Types.ObjectId,
-    ref: 'users'
+    ref: 'users',
   }],
   color: {
     type: String,
