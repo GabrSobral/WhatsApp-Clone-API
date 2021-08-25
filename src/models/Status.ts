@@ -6,7 +6,9 @@ export interface IStatusSchema extends Document {
   message?: String;
   validity: Date;
   owner: IUser["_id"];
-  viewedBy: IUser["_id"][]
+  viewedBy: IUser["_id"][];
+  color: String;
+  destinedTo: IUser["_id"];
 }
 
 const StatusSchema = new Schema<IStatusSchema>({
@@ -34,7 +36,11 @@ const StatusSchema = new Schema<IStatusSchema>({
   color: {
     type: String,
     default: "#dd00dd"
-  }
+  },
+  destinedTo: [{
+    type: Schema.Types.ObjectId,
+    ref: 'users'
+  }]
 })
 
 const Status = model<IStatusSchema>('status', StatusSchema)
