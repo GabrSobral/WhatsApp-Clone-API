@@ -1,6 +1,8 @@
 import express from 'express'
+import multer from 'multer'
 
 import checkAuth from './middlewares/checkAuth'
+import { options } from './config/multer'
 
 import CreateUserController from './controllers/Users/CreateUserController'
 import ShowUserController from './controllers/Users/ShowUserController'
@@ -20,7 +22,12 @@ import ListRoomMessagesController from './controllers/Room/ListRoomMessagesContr
 import DeleteRoomController from './controllers/Room/DeleteRoomController'
 import DeleteAllMessages from './controllers/Messages/DeleteAllMessages'
 
+import ListMyStatusController from './controllers/Status/ListMyStatusController'
+import CreateStatusController from './controllers/Status/CreateStatusController'
+import ListStatusToMeController from './controllers/Status/ListStatusToMeController'
+
 const router = express.Router()
+const upload = multer(options)
 
 router.post('/messages/new', checkAuth, CreateMessageController.handle)
 router.get('/messages/list', checkAuth, ListMessagesController.handle)
@@ -39,5 +46,9 @@ router.get('/room/list', checkAuth, ListRoomsController.handle)
 router.get('/room/:id', checkAuth, ShowRoomController.handle)
 router.get('/room/messages/list/:id', checkAuth, ListRoomMessagesController.handle)
 router.delete('/room/delete/:id', checkAuth, DeleteRoomController.handle)
+
+router.post('/status/create', checkAuth, upload.single('file'), CreateStatusController.handle)
+router.get('/status/my-list', checkAuth, ListMyStatusController.handle)
+router.get('/status/list', checkAuth, ListStatusToMeController.handle)
 
 export default router
