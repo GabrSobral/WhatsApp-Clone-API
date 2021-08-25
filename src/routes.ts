@@ -24,6 +24,7 @@ import DeleteAllMessages from './controllers/Messages/DeleteAllMessages'
 
 import ListMyStatusController from './controllers/Status/ListMyStatusController'
 import CreateStatusController from './controllers/Status/CreateStatusController'
+import ListStatusToMeController from './controllers/Status/ListStatusToMeController'
 
 const router = express.Router()
 const upload = multer(options)
@@ -48,5 +49,6 @@ router.delete('/room/delete/:id', checkAuth, DeleteRoomController.handle)
 
 router.post('/status/create', checkAuth, upload.single('file'), CreateStatusController.handle)
 router.get('/status/my-list', checkAuth, ListMyStatusController.handle)
+router.get('/status/list', checkAuth, ListStatusToMeController.handle)
 
 export default router
