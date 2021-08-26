@@ -34,7 +34,8 @@ class ListStatusToMeService {
         file: item.file,
         color: item.color,
         message: item.message,
-        createdAt: item.createdAt
+        createdAt: item.createdAt,
+        viewed: item.viewedBy.includes(my_id)
       }
       
       if(String(item.owner._id) !== String(currentUser)) {
