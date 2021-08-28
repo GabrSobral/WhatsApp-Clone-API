@@ -1,5 +1,6 @@
 import { IStatusSchema, Status } from "../../models/Status"
 import { IUser } from "../../models/Users"
+import handleControlFileOnCloud from "./handleControlFileOnCloud"
 
 interface IStatusFormat {
   _id: String;
@@ -7,6 +8,8 @@ interface IStatusFormat {
   color: String;
   message: String;
   createdAt: Date;
+  format: String;
+  public_id: String;
 }
 
 interface IStatusDataFormat {
@@ -21,11 +24,14 @@ class ListStatusToMeService {
     let currentUser = ''
     let currentIndex = 0
     const statusToMe = 
-      await Status.find({ destinedTo : { $in: my_id } }).populate('owner')
+      await Status.find({ destinedTo : { $in: my_id } })
+      .sort({ createdAt: -1, owner: 1 })
+      .populate('owner')
 
       statusToMe.forEach(async (item: IStatusSchema) => {
         if(item.validity.getTime() < currentDate.getTime()) {
           await Status.findByIdAndDelete(item._id)
+          await handleControlFileOnCloud.delete(item.public_id.toString())
           return
       }
 
@@ -35,7 +41,9 @@ class ListStatusToMeService {
         color: item.color,
         message: item.message,
         createdAt: item.createdAt,
-        viewed: item.viewedBy.includes(my_id)
+        viewed: item.viewedBy.includes(my_id),
+        format: item.format,
+        public_id: undefined
       }
       
       if(String(item.owner._id) !== String(currentUser)) {

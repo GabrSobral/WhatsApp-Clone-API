@@ -10,6 +10,8 @@ export interface IStatusSchema extends Document {
   color: String;
   destinedTo: IUser["_id"];
   createdAt: Date;
+  public_id: String;
+  format: String;
 }
 
 const StatusSchema = new Schema<IStatusSchema>({
@@ -46,6 +48,14 @@ const StatusSchema = new Schema<IStatusSchema>({
     type: Date,
     required: true,
     default: Date.now
+  },
+  public_id: {
+    type: String,
+    required: false
+  },
+  format: {
+    type: String,
+    required: false
   }
 })
 
