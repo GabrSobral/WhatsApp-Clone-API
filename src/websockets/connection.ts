@@ -6,24 +6,30 @@ import { Messages } from "../models/Message"
 import { User } from "../models/Users"
 import { Room } from "../models/Room"
 
-io.on('connection', (socket: Socket) => {
-  console.log('A new user has been connected: ', socket.id)
+import CreateMessageService from "../services/Messages/CreateMessageService"
+import ListRoomsService from "../services/Room/ListRoomsService"
 
-  socket.on('joinroom', ({rooms}) => {
-    rooms.forEach((item: string) => {
-     socket.join(item)
-    })
-  })
+io.on('connection', (socket: Socket) => {
+  console.log('A new user has been connected: ', socket.id);
+
+  socket.on('fetch_rooms', async ({ user_id }) => {
+    const rooms = await ListRoomsService.execute(user_id);
+    
+    rooms.forEach(item => socket.join(item._id.toString()));
+    socket.join(user_id);
+    socket.emit("receive_fetch_rooms", { rooms });
+    console.log(socket.rooms);
+  });
 
   socket.on('joinNewRoom', async ({user_target, user, check, room_id}) =>{
-    socket.join(user_target)    
+    socket.join(user_target); 
 
-    if(!check){
-      const updatedRoom = await Room.findById(room_id)
-        .populate(['users', "messages"])
+    if(!check) {
+      const updatedRoom = await Room
+        .findById(room_id)
+        .populate(['users', "messages"]);
 
-      console.log(updatedRoom)
-      const user_data = await User.findById(user)
+      const user_data = await User.findById(user);
 
       const formattedRoom = {
         _id: updatedRoom._id,
@@ -31,52 +37,71 @@ io.on('connection', (socket: Socket) => {
         user: [user_data],
         unreadMessages: 0
       }
-      io.to(user_target).emit('receiveJoinNewRoom', 
-        { user, room: formattedRoom })
+      socket.to(room_id).emit('receiveJoinNewRoom', {
+        user,
+        room: formattedRoom
+      });
     }
-  })
+  });
 
   socket.on('removeRoom', ({ user_target, user, room, check }) => {
     if(!check){
-      io.to(user_target).emit('receiveRemoveRoom', { user, room })
+      socket.to(user_target).emit('receiveRemoveRoom', { user, room })
       socket.leave(user_target)
-    } else {
+    } else
       socket.leave(user_target)
-    }
-    
-  })
+  });
 
   socket.on('viewUnreadMessages', async({ user, room }) => {
     await UnreadMessages.deleteMany({ to: room, user: { $nin:user } })
-    await Messages.updateMany(
-      { viewed: false, user: { $nin:user }, to: room }, {"$set":{"viewed": true}})
+    await Messages.updateMany({
+      viewed: false,
+      user: { $nin:user },
+      to: room
+    }, {"$set":{ "viewed": true }});
 
-    io.to(user).emit('receiveReadMessages', { room, user })
-  })
+    socket.to(room).emit('receiveReadMessages', { room, user })
+  });
 
   socket.on('writting', ({ to, writting, room }) => {
-    io.to(to).emit('receiveWritting', { writting, room, to })
-  })
+    socket.to(to).emit('receiveWritting', { writting, room, to });
+  });
 
-  socket.on('imOnline', async({ user, status, room }) => {
-    if(status){
-      await User.findByIdAndUpdate(user, { isOnline: true })
-    } else {
-      await User.findByIdAndUpdate(user, { isOnline: false })
-    }
-    io.to(user).emit('receiveImOnline', { user, status, room })
-  })
+  socket.on('imOnline', async({ user, status, rooms }) => {
+    await User.findByIdAndUpdate(user, { isOnline: !!status });
 
-  socket.on('disconnect', () =>{
-    console.log('A user has been disconnected')
-  })
-
-  socket.on('sendMessage', async ({messageData, room}) => {
-    const unreadMessages = await UnreadMessages.create({
-      user: messageData.user,
-      message: messageData,
-      to: messageData.assignedTo
+    rooms.forEach((item) => {
+      socket.to(item._id).emit('receiveImOnline', { user, status, room: item._id })
     })
-    io.to(room).emit('newMessage', {messageData, unreadMessages})
-  })
-})
+  });
+
+  socket.on('disconnecting', () => {
+    console.log('A user has been disconnected', socket.rooms)
+    socket.rooms.forEach((item) => {
+      socket.to(item).emit('receiveImOnline', { status: false, room: item })
+    })
+  });
+
+  socket.on('sendMessage', async ({ message }) => {
+    const messateText = message.message;
+    const assignedTo = message.assignedTo;
+    const user_id = message.user;
+
+    const newMessage = await CreateMessageService
+      .execute({ 
+        message: messateText, 
+        assignedTo, 
+        user_id
+      });
+
+    const unreadMessages = await UnreadMessages.create({
+      user: user_id,
+      message: newMessage,
+      to: assignedTo
+    });
+
+    message._id = newMessage._id;
+
+    io.to(assignedTo).emit('newMessage', { message, unreadMessages });
+  });
+});
