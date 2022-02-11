@@ -3,13 +3,13 @@ import CreateUserService from "../../services/User/CreateUserService";
 
 class CreateUserController{
   async handle(request: Request, response: Response){
-    const { name, email, password } = request.body
+    const { name, phoneNumber } = request.body;
 
     const user = await CreateUserService.execute({
-      name, email, password
-    })
+      name, phoneNumber
+    });
 
-    return response.json(user)
+    return response.json(user);
   }
 }
 export default new CreateUserController()

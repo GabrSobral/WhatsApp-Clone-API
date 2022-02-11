@@ -1,15 +1,24 @@
 import { Room } from "../../models/Room"
-import { UnreadMessages } from "../../models/UnreadMessages"
+import { IUnreadMessages, UnreadMessages } from "../../models/UnreadMessages"
 import { IUser } from "../../models/Users"
+import { IMessage } from "../../models/Message"
+
+export interface IFormattedRooms {
+  _id: string;
+  messages: IMessage[];
+  user: IUser[];
+  unreadMessages: number;
+}
 
 class ListRoomsService{
   async execute(user_id: string){
-    const rooms = 
-      await Room.find(
-        { users: {$in:user_id} }, { messages: {$slice: -1} }
-      ).populate(['users', 'messages'])
+    const rooms = await Room.find({ 
+      users: {$in:user_id} 
+    }, { 
+      messages: {$slice: -1} 
+    }).populate(['users', 'messages'])
       
-      const formattedRooms =  await Promise.all(
+      const formattedRooms: IFormattedRooms[] =  await Promise.all(
         rooms.map(async (room) => {
           const unreadMessages = await UnreadMessages.countDocuments(
             { to: room._id, user: { $nin:user_id } }
