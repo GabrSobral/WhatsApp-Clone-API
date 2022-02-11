@@ -1,12 +1,11 @@
 import { Schema, Document, model } from "mongoose";
-import bcrypt from "bcryptjs";
+import { Room } from './Room'
 
-export interface IUser extends Document{
+export interface IUser extends Document {
   name: string;
-  email: string;
+  phoneNumber: string;
   isOnline: boolean;
   lastOnline: Date;
-  password: string;
   createdAt: Date;
 }
 
@@ -15,11 +14,10 @@ const UserSchema = new Schema<IUser>({
     type: String,
     required: true,
   },
-  email: {
+  phoneNumber: {
     type: String,
     unique: true,
-    required: true,
-    lowercase: true,
+    required: true
   },
   isOnline: {
     type: Boolean,
@@ -31,11 +29,6 @@ const UserSchema = new Schema<IUser>({
     required: true,
     default: Date.now,
   },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
   createdAt: {
     type: Date,
     required: true,
@@ -43,10 +36,8 @@ const UserSchema = new Schema<IUser>({
   },
 });
 
-UserSchema.pre("save", async function (next) {
-  const hash = await bcrypt.hash(this.password, 10);
-  this.password = hash;
-
+UserSchema.pre("remove", function(next) {
+  Room.remove({ user: { $nin: this._id } });
   next();
 });
 

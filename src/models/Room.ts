@@ -1,6 +1,6 @@
 import { Schema, Document, model } from "mongoose";
-import { IMessage } from "./Message";
-import { IUser } from "./Users";
+import { IMessage, Messages } from "./Message";
+import { IUser, User } from "./Users";
 
 export interface IRoom extends Document {
   name: string;
@@ -19,7 +19,7 @@ const RoomSchema = new Schema<IRoom>({
     {
       type: Schema.Types.ObjectId,
       ref: "users",
-      required: true,
+      required: true
     },
   ],
   unreadMessages: [
