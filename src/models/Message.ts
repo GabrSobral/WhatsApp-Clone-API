@@ -7,7 +7,8 @@ export interface IMessage extends Document {
   assignedTo: IUser['_id'];
   timestamp: Date;
   reveived: boolean;
-  viewed: boolean
+  viewed: boolean;
+  referencedTo: IMessage[];
 }
 
 const MessageSchema = new Schema<IMessage>({
@@ -23,6 +24,10 @@ const MessageSchema = new Schema<IMessage>({
     type: Schema.Types.ObjectId,
     ref: "rooms",
     required: true,
+  },
+  referencedTo: {
+    type: Schema.Types.ObjectId,
+    ref: "messages",
   },
   timestamp: {
     type: Date,
