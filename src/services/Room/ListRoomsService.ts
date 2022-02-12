@@ -14,7 +14,6 @@ class ListRoomsService{
   async execute(user_id: string){
     const rooms = await Room.find({users: {$in:user_id}}, ["_id", "users"])
     .populate('users');
-
     
     const formattedRooms: IFormattedRooms[] =  await Promise.all(
       rooms.map(async (room) => {
@@ -22,9 +21,9 @@ class ListRoomsService{
           { to: room._id, user: { $nin:user_id } });
           
         const messages = await Messages
-          .findOne({ assignedTo: room._id }, ["_id", "message", "user", "timestamp"])
+          .findOne({ assignedTo: room._id })
           .sort({timestamp: -1})
-          .populate(["referencedTo"]);
+          .populate("referencedTo", ["_id" ,"message", "user"]);
 
         return {
           _id: room._id,
