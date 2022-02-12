@@ -6,14 +6,14 @@ class ListRoomMessagesService {
 
     !last_message ?
       room = await Messages.find({ assignedTo: room_id })
-      .sort({ _id: -1 }).limit(50)
+      .sort({ _id: -1 }).populate("referencedTo").limit(50)
     :
       room = await Messages.find({ _id: { $lt: last_message}, assignedTo: room_id })
-      .sort({ _id: -1 }).limit(50)
+      .sort({ _id: -1 }).populate("referencedTo").limit(50)
 
-    if(!room){
+    if(!room)
       throw new Error('Room not found status:400')
-    }
+    
     return room.reverse()
   }
 }

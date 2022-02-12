@@ -18,7 +18,6 @@ io.on('connection', (socket: Socket) => {
     rooms.forEach(item => socket.join(item._id.toString()));
     socket.join(user_id);
     socket.emit("receive_fetch_rooms", { rooms });
-    console.log(socket.rooms);
   });
 
   socket.on('joinNewRoom', async ({user_target, user, check, room_id}) =>{
@@ -76,7 +75,7 @@ io.on('connection', (socket: Socket) => {
   });
 
   socket.on('disconnecting', () => {
-    console.log('A user has been disconnected', socket.rooms)
+    console.log('A user has been disconnected', socket.id)
     socket.rooms.forEach((item) => {
       socket.to(item).emit('receiveImOnline', { status: false, room: item })
     })
@@ -86,12 +85,14 @@ io.on('connection', (socket: Socket) => {
     const messateText = message.message;
     const assignedTo = message.assignedTo;
     const user_id = message.user;
+    const referencedTo = message.referencedTo._id;
 
     const newMessage = await CreateMessageService
       .execute({ 
         message: messateText, 
         assignedTo, 
-        user_id
+        user_id,
+        referencedTo
       });
 
     const unreadMessages = await UnreadMessages.create({
@@ -101,7 +102,6 @@ io.on('connection', (socket: Socket) => {
     });
 
     message._id = newMessage._id;
-
     io.to(assignedTo).emit('newMessage', { message, unreadMessages });
   });
 });
