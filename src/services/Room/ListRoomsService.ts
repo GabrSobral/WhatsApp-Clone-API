@@ -27,7 +27,7 @@ class ListRoomsService{
 
         return {
           _id: room._id,
-          messages: [messages],
+          messages: messages ? [messages] : [],
           user: room.users.filter((user: IUser) => String(user._id) !== String(user_id)),
           unreadMessages
         };

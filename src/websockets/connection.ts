@@ -67,15 +67,17 @@ io.on('connection', (socket: Socket) => {
   });
 
   socket.on('imOnline', async({ user, status, rooms }) => {
-    await User.findByIdAndUpdate(user, { isOnline: !!status });
+    await User.findByIdAndUpdate(user, { isOnline: !!status, lastOnline: new Date });
 
-    rooms.forEach((item) => {
-      socket.to(item._id).emit('receiveImOnline', { user, status, room: item._id })
-    })
+    rooms && rooms.forEach((item: string) => {
+      socket.to(item).emit('receiveImOnline', { user, status, room: item })
+    });
   });
 
-  socket.on('disconnecting', () => {
+  socket.on('disconnecting', async () => {
     console.log('A user has been disconnected', socket.id)
+    // await LogoutUserService.execute();
+
     socket.rooms.forEach((item) => {
       socket.to(item).emit('receiveImOnline', { status: false, room: item })
     })
@@ -85,7 +87,7 @@ io.on('connection', (socket: Socket) => {
     const messateText = message.message;
     const assignedTo = message.assignedTo;
     const user_id = message.user;
-    const referencedTo = message.referencedTo._id;
+    const referencedTo = message.referencedTo ? message.referencedTo._id: null;
 
     const newMessage = await CreateMessageService
       .execute({ 
