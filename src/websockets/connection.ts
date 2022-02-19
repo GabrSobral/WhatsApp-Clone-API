@@ -8,6 +8,7 @@ import { Room } from "../models/Room"
 
 import CreateMessageService from "../services/Messages/CreateMessageService"
 import ListRoomsService from "../services/Room/ListRoomsService"
+import LogoutUserService from "../services/User/LogoutUserService"
 
 io.on('connection', (socket: Socket) => {
   console.log('A new user has been connected: ', socket.id);
@@ -15,8 +16,8 @@ io.on('connection', (socket: Socket) => {
   socket.on('fetch_rooms', async ({ user_id }) => {
     const rooms = await ListRoomsService.execute(user_id);
     
-    rooms.forEach(item => socket.join(item._id.toString()));
     socket.join(user_id);
+    rooms.forEach(item => socket.join(item._id.toString()));
     socket.emit("receive_fetch_rooms", { rooms });
   });
 
@@ -51,9 +52,9 @@ io.on('connection', (socket: Socket) => {
       socket.leave(user_target)
   });
 
-  socket.on('viewUnreadMessages', async({ user, room }) => {
-    await UnreadMessages.deleteMany({ to: room, user: { $nin:user } })
-    await Messages.updateMany({
+  socket.on('viewUnreadMessages', ({ user, room }) => {
+    UnreadMessages.deleteMany({ to: room, user: { $nin:user } })
+    Messages.updateMany({
       viewed: false,
       user: { $nin:user },
       to: room
@@ -66,17 +67,17 @@ io.on('connection', (socket: Socket) => {
     socket.to(to).emit('receiveWritting', { writting, room, to });
   });
 
-  socket.on('imOnline', async({ user, status, rooms }) => {
-    await User.findByIdAndUpdate(user, { isOnline: !!status, lastOnline: new Date });
+  socket.on('imOnline', ({ user, status, rooms }) => {
+    User.findByIdAndUpdate(user, { isOnline: !!status, lastOnline: new Date });
 
     rooms && rooms.forEach((item: string) => {
       socket.to(item).emit('receiveImOnline', { user, status, room: item })
     });
   });
 
-  socket.on('disconnecting', async () => {
-    console.log('A user has been disconnected', socket.id)
-    // await LogoutUserService.execute();
+  socket.on('disconnecting', () => {
+    console.log('A user has been disconnected', socket.rooms)
+    LogoutUserService.execute(socket.rooms[1]);
 
     socket.rooms.forEach((item) => {
       socket.to(item).emit('receiveImOnline', { status: false, room: item })
