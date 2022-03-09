@@ -10,4 +10,4 @@ class ShowUserService{
     return user;
   }
 }
-export default new ShowUserService()
+export { ShowUserService };

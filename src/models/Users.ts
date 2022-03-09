@@ -2,32 +2,36 @@ import { Schema, Document, model } from "mongoose";
 import { Room } from './Room'
 
 export interface IUser extends Document {
-  name: string;
-  phoneNumber: string;
-  isOnline: boolean;
-  lastOnline: Date;
+  id: string;
+  jid: string;
+  bio: string;
+  number: string;
+  wa_name: string,
+  photo: string;
   createdAt: Date;
 }
 
 const UserSchema = new Schema<IUser>({
-  name: {
+  wa_name: {
     type: String,
     required: true,
   },
-  phoneNumber: {
+  bio: {
+    type: String,
+    required: false
+  },
+  jid: {
+    type: String,
+    required: true
+  },
+  number: {
     type: String,
     unique: true,
     required: true
   },
-  isOnline: {
-    type: Boolean,
-    required: true,
-    default: true,
-  },
-  lastOnline: {
-    type: Date,
-    required: true,
-    default: Date.now,
+  photo: {
+    type: String,
+    required: false,
   },
   createdAt: {
     type: Date,

@@ -6,4 +6,4 @@ class ListUsersService{
     return users
   }
 }
-export default new ListUsersService()
+export { ListUsersService };

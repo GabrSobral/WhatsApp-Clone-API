@@ -6,4 +6,4 @@ class DeleteUserService {
     return;
   }
 }
-export default new DeleteUserService();
+export { DeleteUserService };

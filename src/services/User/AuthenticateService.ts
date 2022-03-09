@@ -1,20 +1,22 @@
 import { User } from "../../models/Users";
-import handleGenerateJWT from "../../utils/handleGenerateJWT";
 
 interface IAuthenticateService {
-  phoneNumber: string;
+  number: string;
+  wa_name: string;
+  jid: string;
 }
 
 class AuthenticateService{
-  async execute({ phoneNumber }: IAuthenticateService){
-    const user = await User.findOne({ phoneNumber });
+  async execute({ number, wa_name, jid }: IAuthenticateService){    
+    const user = await User.findOne({ number, jid });
 
-    if(!user)
-      throw new Error("PhoneNumber invalid status:400");
+    if(user)
+      return await User.create({ wa_name, number, jid });
+    
+    user.wa_name = wa_name;
+    await User.updateOne(user._id, { wa_name });
 
-    const token = handleGenerateJWT(user);
-
-    return { user, token };
+    return user;
   }
 }
-export default new AuthenticateService();
+export { AuthenticateService };

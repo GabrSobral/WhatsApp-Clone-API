@@ -8,4 +8,4 @@ class LogoutUserService {
     });
   }
 }
-export default new LogoutUserService();
+export { LogoutUserService };

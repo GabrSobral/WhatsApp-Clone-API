@@ -21,4 +21,4 @@ class CreateUserService {
     return { user, token };
   }
 }
-export default new CreateUserService();
+export { CreateUserService };
